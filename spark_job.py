@@ -2,7 +2,7 @@ import argparse
 import pyspark
 import gcsfs
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StructField, IntegerType, TimestampNTZType, StringType, DoubleType
+from pyspark.sql.types import StructType, StructField, IntegerType, TimestampType, StringType, DoubleType
 from pyspark.sql.functions import lit, col
 
 def fix_schema(taxi_type, data):
@@ -10,8 +10,8 @@ def fix_schema(taxi_type, data):
     schemas = StructType(
       [
         StructField('VendorID', IntegerType(), True),
-        StructField('pickup_datetime', TimestampNTZType(), True),
-        StructField('dropoff_datetime', TimestampNTZType(), True),
+        StructField('pickup_datetime', TimestampType(), True),
+        StructField('dropoff_datetime', TimestampType(), True),
         StructField('store_and_fwd_flag', StringType(), True),
         StructField('RatecodeID', IntegerType(), True),
         StructField('PULocationID', IntegerType(), True),
@@ -36,8 +36,8 @@ def fix_schema(taxi_type, data):
     schemas = StructType(
       [
         StructField('VendorID', IntegerType(), True),
-        StructField('pickup_datetime', TimestampNTZType(), True),
-        StructField('dropoff_datetime', TimestampNTZType(), True),
+        StructField('pickup_datetime', TimestampType(), True),
+        StructField('dropoff_datetime', TimestampType(), True),
         StructField('passenger_count', IntegerType(), True),
         StructField('trip_distance', DoubleType(), True),
         StructField('RatecodeID', IntegerType(), True),
