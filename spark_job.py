@@ -100,6 +100,7 @@ def main(args):
   input_yellow = args.input_yellow
   output = args.output
   temp_bucket = args.temp_bucket
+  write_mode = args.write_mode
 
   spark = SparkSession.builder \
       .appName('DemoProcess') \
@@ -167,6 +168,7 @@ def main(args):
 
   df_result.write.format('bigquery') \
       .option('table', output) \
+      .mode(write_mode) \
       .save()
 
 if __name__=="__main__":
@@ -176,6 +178,7 @@ if __name__=="__main__":
   parser.add_argument('--input_yellow', required=True)
   parser.add_argument('--output', required=True)
   parser.add_argument('--temp_bucket', required=True)
+  parser.add_argument('--write_mode', default="append")
 
   args = parser.parse_args()
 
