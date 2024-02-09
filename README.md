@@ -38,26 +38,82 @@
 
 ## Prepare prerequisites
 
-- Make sure git and wget is available on your cloud shell
+- Make sure git, github cli (gh) and wget is available on your cloud shell
 
   ```bash
+  # check git
   git --version
+
+  # check github CLI
+  gh --version
+
+  # check wget
   wget --version
   ```
+
+- If any of the above are not installed, install them with the following
+
+  ```bash
+  # install git
+  sudo apt-get install git
+
+  # install wget
+  sudo apt-get install wget
+
+  # install github cli
+  type -p curl >/dev/null || (sudo apt-get update && sudo apt-get install curl -y)
+  curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+  && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+  && sudo apt-get update \
+  && sudo apt-get install gh -y
+  ```
+
+- Authenticate with Github CLI:
+
+  ```bash
+  gh auth login
+  ```
+
+- You will be getting some prompts
+
+  ![prompt1](./guide_images/prompt1.png)
+
+  ![prompt2](./guide_images/prompt2.png)
+
+  ![prompt3](./guide_images/prompt3.png)
+
+  ![prompt4](./guide_images/prompt4.png)
+
+  ![prompt5](./guide_images/prompt5.png)
+
+- Open the URL from the prompt on your browser and enter the OTP code
+
+  ![finalprompt](./guide_images/finalprompt.png)
 
 - Next clone the git repo:
 
   ```bash
-  git clone https://<personal-access-token>@github.com/etchzel/dataproc-batch.git
+  # clone repo
+  git clone https://github.com/etchzel/dataproc-batch.git
+
+  # change directory
   cd dataproc-batch
   ```
 
 - Run the script `download_to_gcs.sh` to prepare the data
 
   ```bash
+  # allow execution of script
   chmod +x download_to_gcs.sh
-  ./download_to_gcs.sh /home/<username>/dataproc-batch gs://trainer_gcs_001/dataproc/input
+
+  # execute script to download data
+  ./download_to_gcs.sh ~/dataproc-batch gs://trainer_gcs_001/dataproc/input
   ```
+
+  If an auth pop up appears like below, click authorize:
+
+  ![authpop](./guide_images/authpop.png)
 
 - Next copy the file `spark_job.py` to GCS
 
@@ -94,10 +150,19 @@
   - Under `Additional python files` enter the path to the zipped python dependencies
 
     ```bash
+    # prep folder
     mkdir utils
+
+    # install dependencies on prep folder
     pip install <pypi-dependencies> <pypi-dependencies> --target=utils/
+
+    # change directory to prep folder
     cd utils
+
+    # zip the dependencies
     zip -r dependencies.zip .
+
+    # copy the zipped file to cloud storage 
     gcloud storage cp dependencies.zip gs://trainer_gcs_001/dataproc/dependencies.zip
     ```
 
@@ -114,9 +179,10 @@
   --input_yellow=gs://trainer_gcs_001/dataproc/input/yellow_tripdata_*.parquet
   --output=${DATASET_NAME}.${TABLE_NAME}
   --temp_bucket=trainer_gcs_001/dataproc/temp
+  --write_mode=overwrite
   ```
 
-  ![args](./guide_images/args.png)
+  ![args](./guide_images/argsv2.png)
 
 - Scroll below again, under `Network Configuration`, make sure network `default` and subnetwork `default` is selected (or change it if you have custom VPC & subnets configured for this)
 
